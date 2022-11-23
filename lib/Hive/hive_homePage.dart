@@ -5,6 +5,8 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:hive_flutter/adapters.dart';
 
+import '../notificaion/push_notification_home.dart';
+
 class HiveHomePage extends StatefulWidget {
   const HiveHomePage({Key? key}) : super(key: key);
 
@@ -13,6 +15,11 @@ class HiveHomePage extends StatefulWidget {
 }
 
 class _HiveHomePageState extends State<HiveHomePage> {
+  NotificationServices notificationServices = NotificationServices();
+  void initState(){
+    notificationServices.initializeNotifications(); 
+    super.initState();
+  }
   
   var color = false; 
   @override
@@ -21,6 +28,12 @@ class _HiveHomePageState extends State<HiveHomePage> {
 
     return SafeArea(child: Scaffold(
       appBar: AppBar(title: Text("Hive Off Line Database"),),
+      floatingActionButton:FloatingActionButton(onPressed: (() {
+        notificationServices.sendNotification("Bismillah","Bismillahir Rahamanir Rahim");
+      }), 
+      child: Icon(Icons.notifications),
+      ) , 
+      
       body: ValueListenableBuilder(
         valueListenable: Hive.box('vocabulary').listenable(),
       

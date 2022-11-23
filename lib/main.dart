@@ -7,6 +7,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:hive_flutter/adapters.dart';
 import 'package:pay_app/Hive/hive_homePage.dart';
+import 'package:pay_app/fetch_data.dart';
+import 'package:pay_app/notificaion/push_notification_home.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:http/http.dart' as http;
 enum SdkType { TESTBOX, LIVE }
@@ -28,7 +30,7 @@ void callbackDispatcher() {
         android: androidNotificationChannelSpecifics
       );
       await flutterLocalNotificationsPlugin.show(
-        0, resData['data']['title'], resData['data']['body'],
+        0, resData['title'], resData['body'],
          platformChannelSpecifics, 
          payload: 'item x');
          return Future.value(true); 
@@ -73,6 +75,7 @@ if(payload != null){
 }
  }
 class _MyAppState extends State<MyApp> {
+  
   var _key = GlobalKey<FormState>();
   dynamic formData = {};
   SdkType _radioSelected = SdkType.TESTBOX;
@@ -80,6 +83,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HiveHomePage()
+      home: FetchData()
     );
   }}
