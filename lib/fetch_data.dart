@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:pay_app/model/fetch_data_model.dart';
@@ -17,13 +15,22 @@ class FetchData extends StatefulWidget {
 
 class _FetchDataState extends State<FetchData> {
 
+  void initState(){
+ Workmanager().initialize(callbackDispatcher,isInDebugMode: true); 
+    super.initState();
+     Workmanager().registerPeriodicTask("2","uniquekey1", frequency: Duration(seconds: 5), 
+  
+  inputData:{"title":datalist[0], } ); 
+
+
+  
+  }
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    if(task=='uniquekey'){
+    if(task=='uniquekey1'){
       // do the task in Backend for how and when to send notification 
-      var response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts/2')); 
-      Map<String,dynamic> resData = json.decode(response.body); 
-      print(resData['title']);
+     
+    
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
       const AndroidNotificationDetails androidNotificationChannelSpecifics = 
       AndroidNotificationDetails("your channel id", 'your channel name', 
@@ -35,7 +42,7 @@ void callbackDispatcher() {
         android: androidNotificationChannelSpecifics
       );
       await flutterLocalNotificationsPlugin.show(
-        0, resData['title'], resData['body'],
+        0,datalist[0],datalist[0] ,
          platformChannelSpecifics, 
          payload: 'item x');
          return Future.value(true); 
@@ -45,6 +52,59 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
+  
+  final TextEditingController title = TextEditingController(); 
+  
+   List datalist = ['dbody'];
+   insertData(String title){
+   datalist.add(title); 
+
+   print(datalist.length); 
+   }
+  GlobalKey<FormState> key = GlobalKey();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar:AppBar(title: Text("Fetch Data"),), 
+
+      body: ListView(
+        children: [
+          Form(
+            key: key,
+            child: Column(
+            children: [
+              Container(
+              margin: EdgeInsets.all(20),
+                child: TextField(
+            controller: title,
+          ),
+              ),
+       
+
+          ElevatedButton(onPressed: (){
+          insertData(title.text); 
+          }, child: Text("Insert Data"))
+            ],
+          ), 
+          
+          
+          ), 
+
+          // Expanded(
+          //   child: Container(
+          //     child: ListView.builder(
+          //       itemCount: datalist.length,
+          //       itemBuilder:(context,index){
+          //       return ListTile(title: Text(datalist[index]),);
+          //     }),
+          //   ),
+          // )
+        ],
+      )
+      
+    );
+  }
+
   fetchData() async{
     List<FetchDataModel> list = []; 
   var response = await http.get(Uri.parse("https://jsonplaceholder.typicode.com/posts")); 
@@ -57,25 +117,5 @@ void callbackDispatcher() {
        
    }
    return list;
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:AppBar(title: Text("Fetch Data"),), 
-
-      body: FutureBuilder(
-        future: fetchData(), 
-        builder: ((context,AsyncSnapshot snapshot) {
-          return  ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder:(context, index) {
-            return ListTile(
-            
-            title: Text(snapshot.data[index].title.toString()),
-            );
-          });
-        }),
-      ),
-    );
   }
 }

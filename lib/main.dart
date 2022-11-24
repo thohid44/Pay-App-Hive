@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:hive_flutter/adapters.dart';
-import 'package:pay_app/Hive/hive_homePage.dart';
+import 'package:pay_app/bkash_home.dart';
+
 import 'package:pay_app/fetch_data.dart';
-import 'package:pay_app/notificaion/push_notification_home.dart';
+
 import 'package:workmanager/workmanager.dart';
 import 'package:http/http.dart' as http;
 enum SdkType { TESTBOX, LIVE }
@@ -18,7 +19,8 @@ void callbackDispatcher() {
       // do the task in Backend for how and when to send notification 
       var response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts/2')); 
       Map<String,dynamic> resData = json.decode(response.body); 
-      print(resData['title']);
+     resData.length.runtimeType;
+     
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
       const AndroidNotificationDetails androidNotificationChannelSpecifics = 
       AndroidNotificationDetails("your channel id", 'your channel name', 
@@ -50,11 +52,11 @@ Future<void> main() async{
    flutterLocalNotificationsPlugin.initialize(initializationSettings, 
   );
   
-  Workmanager().initialize(callbackDispatcher, 
-  isInDebugMode: true); 
-  Workmanager().registerPeriodicTask("2","uniquekey", frequency: Duration(seconds: 5), 
+  // Workmanager().initialize(callbackDispatcher, 
+  // isInDebugMode: true); 
+  // Workmanager().registerPeriodicTask("2","uniquekey", frequency: Duration(seconds: 125), 
   
-  inputData:{"title":'title'} ); 
+  // inputData:{"title":'title'} ); 
 
 
   
@@ -83,6 +85,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: FetchData()
+      debugShowCheckedModeBanner: false,
+      home: HomePage(title: 'Bkash Payment',)
     );
   }}
